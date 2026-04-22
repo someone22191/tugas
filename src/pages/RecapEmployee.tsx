@@ -44,43 +44,43 @@ export default function RecapEmployee() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-3xl border border-neutral-200 shadow-sm flex flex-col md:flex-row justify-between gap-6">
+      <div className="bg-white p-6 rounded-xl border border-border-theme shadow-sm flex flex-col md:flex-row justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="bg-primary/10 p-3 rounded-2xl">
+          <div className="bg-primary-light p-3 rounded-lg">
             <UserCheck className="text-primary h-6 w-6" />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-bold text-neutral-400 uppercase flex items-center gap-1">
+            <label className="text-[12px] font-bold text-[#90A4AE] uppercase flex items-center gap-1 tracking-wider">
               <Calendar className="h-3 w-3" /> Tanggal Rekap
             </label>
             <input 
               type="date" 
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="font-bold text-lg outline-none bg-transparent"
+              className="font-bold text-[16px] outline-none bg-transparent"
             />
           </div>
         </div>
 
         <div className="flex items-center">
-          <button className="bg-green-600 text-white px-8 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-green-700 transition-all shadow-lg shadow-green-100">
-            <FileSpreadsheet className="h-5 w-5" />
+          <button className="bg-[#4CAF50] text-white px-8 py-3 rounded-md font-bold flex items-center gap-2 hover:bg-green-700 transition-all shadow-md text-[14px]">
+            <FileSpreadsheet className="h-4 w-4" />
             Download Laporan Harian
           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-neutral-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-border-theme shadow-sm overflow-hidden text-[13px]">
         <table className="w-full text-left">
-          <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase tracking-wider">
+          <thead className="bg-[#FAFBFC] text-[#90A4AE] uppercase tracking-wider border-b border-border-theme">
             <tr>
-              <th className="px-8 py-4 font-bold">Karyawan</th>
-              <th className="px-8 py-4 font-bold text-center">Status</th>
-              <th className="px-8 py-4 font-bold text-center">Jam Absen</th>
-              <th className="px-8 py-4 font-bold">Jabatan/Peran</th>
+              <th className="px-8 py-4 font-semibold">Karyawan</th>
+              <th className="px-8 py-4 font-semibold text-center">Status</th>
+              <th className="px-8 py-4 font-semibold text-center">Jam Absen</th>
+              <th className="px-8 py-4 font-semibold">Jabatan/Peran</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-100">
+          <tbody className="divide-y divide-[#F1F3F5]">
             {recapData.map((item) => (
               <tr key={item.id} className="hover:bg-neutral-50 transition-colors">
                 <td className="px-8 py-4">
@@ -88,29 +88,29 @@ export default function RecapEmployee() {
                     <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-bold text-primary">
                       {item.full_name?.charAt(0)}
                     </div>
-                    <span className="font-bold text-sm">{item.full_name}</span>
+                    <span className="font-bold text-text-main">{item.full_name}</span>
                   </div>
                 </td>
                 <td className="px-8 py-4 text-center">
                   {item.attendance ? (
                     <span className={cn(
-                      "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border",
-                      item.attendance.status === 'hadir' ? "bg-green-50 text-green-600 border-green-100" :
-                      item.attendance.status === 'sakit' ? "bg-orange-50 text-orange-600 border-orange-100" :
-                      item.attendance.status === 'izin' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                      "bg-red-50 text-red-600 border-red-100"
+                      "px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider inline-block min-w-[80px]",
+                      item.attendance.status === 'hadir' ? "bg-[#E8F5E9] text-[#2E7D32]" :
+                      item.attendance.status === 'sakit' ? "bg-[#FFF3E0] text-[#EF6C00]" :
+                      item.attendance.status === 'izin' ? "bg-[#FFEBEE] text-[#C62828]" :
+                      "bg-[#FFEBEE] text-[#C62828]"
                     )}>
                       {item.attendance.status}
                     </span>
                   ) : (
-                    <span className="text-[10px] text-neutral-300 italic">Tanpa Keterangan</span>
+                    <span className="text-[11px] text-[#90A4AE] italic">Tanpa Keterangan</span>
                   )}
                 </td>
-                <td className="px-8 py-4 text-center font-mono text-xs text-neutral-500">
+                <td className="px-8 py-4 text-center font-mono text-xs text-[#90A4AE]">
                   {item.attendance?.check_in_time || '--:--'}
                 </td>
-                <td className="px-8 py-4">
-                   <span className="text-xs font-medium text-neutral-500 uppercase tracking-wider bg-neutral-50 px-3 py-1 rounded-full border border-neutral-100">
+                <td className="px-8 py-4 font-medium text-[#607D8B]">
+                   <span className="bg-[#F8F9FA] px-2 py-1 rounded text-[11px] border border-border-theme uppercase tracking-wider">
                      {item.role}
                    </span>
                 </td>

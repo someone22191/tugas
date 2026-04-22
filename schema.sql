@@ -57,15 +57,15 @@ create policy "Admins can read all profiles" on profiles for select
 -- Students: Everyone with role 'admin' or 'guru' can read.
 create policy "Staff can read students" on students for select 
   using (exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'guru')));
-create policy "Admins can manage students" on students all 
+create policy "Admins can manage students" on students for all 
   using (exists (select 1 from profiles where id = auth.uid() and role = 'admin'));
 
 -- Employee Attendance: Own record or Admin recap.
-create policy "Users can manage own attendance" on attendance_employees all using (auth.uid() = user_id);
+create policy "Users can manage own attendance" on attendance_employees for all using (auth.uid() = user_id);
 create policy "Admins can read all employee attendance" on attendance_employees for select
   using (exists (select 1 from profiles where id = auth.uid() and role = 'admin'));
 
 -- Student Attendance: Guru and Admin.
-create policy "Guru/Admin manage student attendance" on attendance_students all
+create policy "Guru/Admin manage student attendance" on attendance_students for all
   using (exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'guru')));
 ```

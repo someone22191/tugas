@@ -40,41 +40,46 @@ export default function AppLayout() {
   return (
     <div className="flex h-screen bg-neutral-50 overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-72 bg-white border-r border-neutral-200 flex flex-col">
-        <div className="p-6 border-b border-neutral-100">
-          <Link to="/app" className="flex items-center gap-2">
-            <div className="bg-primary p-1.5 rounded-lg">
-              <GraduationCap className="text-white h-5 w-5" />
+      <aside className="w-[260px] bg-white border-r border-border-theme flex flex-col shadow-sm">
+        <div className="p-6 border-b border-border-theme flex items-center gap-3">
+          <Link to="/app" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
+              U
             </div>
-            <span className="font-bold text-lg tracking-tight">SMK Prima Unggul</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-[13px] leading-tight text-primary uppercase">SMK PRIMA</span>
+              <span className="font-bold text-[13px] leading-tight text-primary uppercase">UNGGUL</span>
+            </div>
           </Link>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-          {filteredMenu.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium",
-                location.pathname === item.path 
-                  ? "bg-primary text-white shadow-md shadow-primary/20" 
-                  : "text-neutral-500 hover:bg-neutral-100"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              {item.label}
-            </Link>
-          ))}
+        <nav className="flex-1 overflow-y-auto pt-6 pb-4">
+          <div className="px-4 space-y-1">
+            {filteredMenu.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "flex items-center gap-3 px-6 py-3 transition-all text-[14px]",
+                  location.pathname === item.path 
+                    ? "bg-primary-light text-primary border-r-4 border-primary font-semibold" 
+                    : "text-neutral-500 hover:bg-neutral-50 hover:text-primary"
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
           {/* Rekap Submenu */}
           {['admin', 'guru'].includes(role) && (
-            <div className="space-y-1">
+            <div className="px-4 mt-2">
               <button 
                 onClick={() => setRekapOpen(!rekapOpen)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium text-neutral-500 hover:bg-neutral-100",
-                  (location.pathname.includes('rekap-siswa') || location.pathname.includes('rekap-karyawan')) && "bg-neutral-50 text-neutral-900 font-bold"
+                  "w-full flex items-center justify-between px-6 py-3 transition-all text-[14px] text-neutral-500 hover:bg-neutral-50",
+                  (location.pathname.includes('rekap-siswa') || location.pathname.includes('rekap-karyawan')) && "text-primary font-semibold"
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -85,12 +90,12 @@ export default function AppLayout() {
               </button>
               
               {(rekapOpen || location.pathname.includes('rekap')) && (
-                <div className="pl-12 space-y-1">
+                <div className="pl-14 pt-1 space-y-1">
                   <Link 
                     to="/app/rekap-siswa" 
                     className={cn(
-                      "block py-2 text-sm transition-all",
-                      location.pathname === '/app/rekap-siswa' ? "text-primary font-bold" : "text-neutral-500 hover:text-neutral-900"
+                      "block py-2 text-[13px] transition-all",
+                      location.pathname === '/app/rekap-siswa' ? "text-primary font-semibold" : "text-neutral-500 hover:text-primary"
                     )}
                   >
                     Rekap Siswa
@@ -99,8 +104,8 @@ export default function AppLayout() {
                     <Link 
                       to="/app/rekap-karyawan" 
                       className={cn(
-                        "block py-2 text-sm transition-all",
-                        location.pathname === '/app/rekap-karyawan' ? "text-primary font-bold" : "text-neutral-500 hover:text-neutral-900"
+                        "block py-2 text-[13px] transition-all",
+                        location.pathname === '/app/rekap-karyawan' ? "text-primary font-semibold" : "text-neutral-500 hover:text-primary"
                       )}
                     >
                       Rekap Karyawan
@@ -112,36 +117,34 @@ export default function AppLayout() {
           )}
         </nav>
 
-        <div className="p-4 border-t border-neutral-100">
-          <div className="bg-neutral-50 p-4 rounded-2xl flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold uppercase">
-              {profile?.full_name?.charAt(0)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold truncate">{profile?.full_name}</p>
-              <p className="text-[10px] text-neutral-500 uppercase tracking-widest">{profile?.role}</p>
-            </div>
+        <div className="p-6 border-t border-border-theme">
+          <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">
+            Admin Mode: <span className="text-primary font-bold">Active v1.0.4</span>
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Header */}
-        <header className="h-20 bg-white border-b border-neutral-200 px-8 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-neutral-800">
-            {filteredMenu.find(m => m.path === location.pathname)?.label || 
-              (location.pathname.includes('rekap-siswa') ? 'Rekap Absensi Siswa' : 
-               location.pathname.includes('rekap-karyawan') ? 'Rekap Absensi Karyawan' : 'Aplikasi')}
-          </h2>
-          
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-neutral-100 hover:bg-neutral-200 px-4 py-2 rounded-xl text-neutral-700 transition-all font-medium text-sm"
-          >
-            <LogOut className="h-4 w-4" />
-            Keluar
-          </button>
+        <header className="h-[64px] bg-white border-b border-border-theme px-8 flex items-center justify-between shadow-sm flex-shrink-0">
+          <div className="text-[13px] text-neutral-400 font-medium">
+            Dashboard / <span className="capitalize">{location.pathname.split('/').pop() || 'Overview'}</span>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <div className="text-right hidden sm:block">
+              <div className="text-[14px] font-bold leading-tight">{profile?.full_name}</div>
+              <div className="text-[11px] text-neutral-400">{profile?.email}</div>
+            </div>
+            
+            <button 
+              onClick={handleLogout}
+              className="px-4 py-2 border border-primary text-primary rounded-md text-[13px] font-semibold hover:bg-primary hover:text-white transition-all"
+            >
+              Log Out
+            </button>
+          </div>
         </header>
 
         {/* Viewport */}

@@ -51,35 +51,35 @@ export default function RecapStudent() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-3xl border border-neutral-200 shadow-sm grid md:grid-columns-3 gap-6">
+      <div className="bg-white p-6 rounded-xl border border-border-theme shadow-sm grid md:grid-cols-3 gap-6">
         <div className="space-y-1">
-          <label className="text-xs font-bold text-neutral-400 uppercase flex items-center gap-1">
+          <label className="text-[12px] font-bold text-[#90A4AE] uppercase flex items-center gap-1 mt-1 tracking-wider">
             <Filter className="h-3 w-3" /> Filter Kelas
           </label>
           <select 
             value={selectedClass} 
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="w-full font-bold text-lg outline-none bg-transparent"
+            className="w-full font-bold text-[16px] outline-none bg-transparent"
           >
             {classes.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-bold text-neutral-400 uppercase flex items-center gap-1">
+          <label className="text-[12px] font-bold text-[#90A4AE] uppercase flex items-center gap-1 mt-1 tracking-wider">
             <Calendar className="h-3 w-3" /> Tanggal Absensi
           </label>
           <input 
             type="date" 
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full font-bold text-lg outline-none bg-transparent"
+            className="w-full font-bold text-[16px] outline-none bg-transparent"
           />
         </div>
 
         <div className="flex items-end">
-          <button className="w-full bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition-all">
-            <FileSpreadsheet className="h-5 w-5" />
+          <button className="w-full bg-[#4CAF50] text-white px-6 py-2.5 rounded-md font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition-all text-[14px]">
+            <FileSpreadsheet className="h-4 w-4" />
             Export Excel
           </button>
         </div>

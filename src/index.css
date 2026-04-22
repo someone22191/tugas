@@ -3,10 +3,22 @@
 
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --color-primary: #dc2626; /* red-600 */
+  --color-primary: #D32F2F; /* brand-red */
+  --color-primary-dark: #B71C1C;
+  --color-primary-light: #FFEBEE;
+  --color-text-main: #2C3E50;
+  --color-bg-main: #F4F7F9;
+  --color-border-theme: #E0E4E8;
 }
 
 body {
-  font-family: var(--font-sans);
-  @apply bg-neutral-50 text-neutral-900;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  @apply bg-bg-main text-text-main;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* {
+  @apply border-border-theme;
 }
