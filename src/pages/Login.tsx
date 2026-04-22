@@ -9,23 +9,35 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isRegister, setIsRegister] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
+    try {
+      if (isRegister) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: 'Admin Sekolah', role: 'admin' }
+          }
+        });
+        if (error) throw error;
+        alert('Registrasi berhasil! Silakan login.');
+        setIsRegister(false);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate('/app');
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setLoading(false);
-    } else {
-      navigate('/app');
     }
   };
 
@@ -45,11 +57,15 @@ export default function Login() {
               </div>
               <span className="font-bold text-xl">SMK Prima Unggul</span>
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight">Selamat Datang</h1>
-            <p className="text-neutral-500 mt-2">Silakan masuk untuk mengakses sistem absensi</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {isRegister ? 'Daftar Admin Baru' : 'Selamat Datang'}
+            </h1>
+            <p className="text-neutral-500 mt-2">
+              {isRegister ? 'Buat akun untuk administrator sistem' : 'Silakan masuk untuk mengakses sistem absensi'}
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleAuth} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-neutral-700 ml-1">Email Sekolah</label>
@@ -89,12 +105,22 @@ export default function Login() {
               </div>
             )}
 
-            <button
-              disabled={loading}
-              className="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
-            >
-              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Masuk Sekarang'}
-            </button>
+            <div className="space-y-4">
+              <button
+                disabled={loading}
+                className="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : isRegister ? 'Daftar Sekarang' : 'Masuk Sekarang'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsRegister(!isRegister)}
+                className="w-full text-xs text-neutral-400 hover:text-primary transition-colors font-medium"
+              >
+                {isRegister ? 'Sudah punya akun? Masuk di sini' : 'Belum punya akun? Daftar sebagai Admin Pertama'}
+              </button>
+            </div>
           </form>
 
           <p className="text-center text-xs text-neutral-400">

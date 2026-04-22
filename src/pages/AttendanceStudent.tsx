@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase, Student, type AttendanceStudent as AttendanceStudentType } from '../lib/supabase';
 import { useAuth } from '../AuthContext';
-import { Search, Loader2, Save, Filter, Check, X } from 'lucide-react';
+import { Search, Loader2, Save, Filter, Check, X, UserPlus } from 'lucide-react';
 import { cn, formatDate } from '../lib/utils';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function AttendanceStudent() {
   const { profile } = useAuth();
@@ -13,12 +13,17 @@ export default function AttendanceStudent() {
   const [selectedClass, setSelectedClass] = useState('X TKJ');
   const [attendance, setAttendance] = useState<Record<string, 'hadir' | 'izin' | 'sakit' | 'alfa'>>({});
   const [todayAttendance, setTodayAttendance] = useState<AttendanceStudentType[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newStudent, setNewStudent] = useState({ nis: '', name: '' });
+  const [addLoading, setAddLoading] = useState(false);
 
   const classes = ['X TKJ', 'X DKV', 'X AK', 'X BC', 'X MPLB', 'X BD', 'XI TKJ', 'XI DKV', 'XI AK', 'XI BC', 'XI MPLB', 'XI BD', 'XII TKJ', 'XII DKV', 'XII AK', 'XII BC', 'XII MPLB', 'XII BD'];
 
   useEffect(() => {
-    fetchData();
-  }, [selectedClass]);
+    if (profile) {
+      fetchData();
+    }
+  }, [selectedClass, profile]);
 
   async function fetchData() {
     setLoading(true);
@@ -87,6 +92,34 @@ export default function AttendanceStudent() {
     setSaving(false);
   };
 
+  const handleAddStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newStudent.nis || !newStudent.name) return;
+    setAddLoading(true);
+    try {
+      const { error } = await supabase.from('students').insert({
+        nis: newStudent.nis.trim(),
+        name: newStudent.name.trim(),
+        class_name: selectedClass
+      });
+      if (error) throw error;
+      
+      // Reset
+      setNewStudent({ nis: '', name: '' });
+      setIsAddModalOpen(false);
+      
+      // Delay slightly for consistency
+      setTimeout(async () => {
+        await fetchData();
+        setAddLoading(false);
+        alert('Siswa berhasil ditambahkan!');
+      }, 800);
+    } catch (err: any) {
+      alert('Gagal menambah siswa: ' + err.message);
+      setAddLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div className="bg-white p-6 rounded-3xl border border-neutral-200 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -95,19 +128,29 @@ export default function AttendanceStudent() {
             <Filter className="text-primary h-6 w-6" />
           </div>
           <div>
-            <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest block mb-1">Filter Kelas</label>
+            <label className="text-[12px] font-bold text-[#90A4AE] uppercase tracking-widest block mb-1">Filter Kelas</label>
             <select 
               value={selectedClass} 
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="font-bold text-lg outline-none bg-transparent"
+              className="font-bold text-[16px] outline-none bg-transparent"
             >
               {classes.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
         </div>
         
-        <div className="flex items-center gap-2 text-sm text-neutral-500">
-           <span className="font-bold text-neutral-900">{students.length} Siswa</span> di kelas ini
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex flex-col text-right">
+             <span className="font-bold text-neutral-900 text-[15px]">{students.length} Siswa</span>
+             <span className="text-[11px] text-neutral-400 uppercase font-bold tracking-wider">Total Terdaftar</span>
+          </div>
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-primary-light text-primary p-3 rounded-xl hover:bg-primary hover:text-white transition-all border border-primary/10 shadow-sm"
+            title="Tambah Siswa Baru ke Kelas Ini"
+          >
+            <UserPlus className="h-5 w-5" />
+          </button>
         </div>
       </div>
 
@@ -179,6 +222,66 @@ export default function AttendanceStudent() {
            <Loader2 className="h-10 w-10 text-primary animate-spin" />
         </div>
       )}
+
+      {/* Modal Tambah Siswa */}
+      <AnimatePresence>
+        {isAddModalOpen && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border border-border-theme"
+            >
+              <div className="px-6 py-4 border-b border-border-theme flex justify-between items-center bg-[#FAFBFC]">
+                <h3 className="font-bold text-[15px] text-text-main">Tambah Siswa Baru ({selectedClass})</h3>
+                <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 hover:bg-neutral-100 rounded-lg"><X className="h-5 w-5 text-neutral-400" /></button>
+              </div>
+              <form onSubmit={handleAddStudent} className="p-6 space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-[#90A4AE] uppercase tracking-wider">NIS (Nomor Induk Siswa)</label>
+                  <input 
+                    required 
+                    type="text" 
+                    className="w-full px-4 py-3 bg-[#F8F9FA] border border-border-theme rounded-xl outline-none focus:border-primary transition-all text-[14px]"
+                    placeholder="Contoh: 12345"
+                    value={newStudent.nis}
+                    onChange={e => setNewStudent({...newStudent, nis: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-[#90A4AE] uppercase tracking-widest">Nama Lengkap Siswa</label>
+                  <input 
+                    required 
+                    type="text" 
+                    className="w-full px-4 py-3 bg-[#F8F9FA] border border-border-theme rounded-xl outline-none focus:border-primary transition-all text-[14px]"
+                    placeholder="Nama Lengkap Siswa"
+                    value={newStudent.name}
+                    onChange={e => setNewStudent({...newStudent, name: e.target.value})}
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsAddModalOpen(false)}
+                    className="flex-1 px-6 py-3 border border-border-theme rounded-xl font-bold text-[13px] hover:bg-neutral-50 transition-all"
+                  >
+                    Batal
+                  </button>
+                  <button 
+                    type="submit" 
+                    disabled={addLoading}
+                    className="flex-1 px-6 py-3 bg-primary text-white rounded-xl font-bold text-[13px] hover:bg-red-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    {addLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Tambahkan'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

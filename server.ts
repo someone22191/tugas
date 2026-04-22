@@ -35,7 +35,7 @@ async function startServer() {
     const { email, password, full_name, role } = req.body;
     
     try {
-      // 1. Create User in Auth
+      // Create User in Auth. The DB Trigger (handle_new_user) will automatically create the profile record.
       const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
@@ -44,18 +44,6 @@ async function startServer() {
       });
 
       if (authError) throw authError;
-
-      // 2. Create Profile in DB
-      const { error: profileError } = await supabaseAdmin
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          full_name,
-          role,
-          email
-        });
-
-      if (profileError) throw profileError;
 
       res.json({ success: true, user: authData.user });
     } catch (error: any) {

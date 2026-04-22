@@ -19,6 +19,7 @@ export default function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [rekapOpen, setRekapOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleLogout = async () => {
     await signOut();
@@ -38,19 +39,30 @@ export default function AppLayout() {
   const filteredMenu = menuItems.filter(item => item.roles.includes(role));
 
   return (
-    <div className="flex h-screen bg-neutral-50 overflow-hidden">
+    <div className="flex h-screen bg-neutral-50 overflow-hidden relative">
       {/* Sidebar */}
-      <aside className="w-[260px] bg-white border-r border-border-theme flex flex-col shadow-sm">
-        <div className="p-6 border-b border-border-theme flex items-center gap-3">
+      <aside className={cn(
+        "w-[260px] bg-white border-r border-border-theme flex flex-col shadow-sm transition-all duration-300 ease-in-out z-50",
+        !isSidebarOpen && "-ml-[260px]"
+      )}>
+        <div className="p-6 border-b border-border-theme flex items-center justify-between gap-3">
           <Link to="/app" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
               U
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-[13px] leading-tight text-primary uppercase">SMK PRIMA</span>
-              <span className="font-bold text-[13px] leading-tight text-primary uppercase">UNGGUL</span>
+              <span className="font-bold text-[11px] leading-tight text-primary uppercase">SMK PRIMA</span>
+              <span className="font-bold text-[11px] leading-tight text-primary uppercase">UNGGUL</span>
             </div>
           </Link>
+          
+          <button 
+            onClick={() => setIsSidebarOpen(false)}
+            className="p-1.5 hover:bg-neutral-100 rounded-lg text-neutral-400 hover:text-primary transition-colors"
+            title="Tutup Menu"
+          >
+            <LogOut className="h-4 w-4 rotate-180" />
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto pt-6 pb-4">
@@ -128,8 +140,19 @@ export default function AppLayout() {
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Header */}
         <header className="h-[64px] bg-white border-b border-border-theme px-8 flex items-center justify-between shadow-sm flex-shrink-0">
-          <div className="text-[13px] text-neutral-400 font-medium">
-            Dashboard / <span className="capitalize">{location.pathname.split('/').pop() || 'Overview'}</span>
+          <div className="flex items-center gap-4">
+            {!isSidebarOpen && (
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 hover:bg-neutral-100 rounded-lg text-primary transition-colors border border-primary/20"
+                title="Buka Menu"
+              >
+                <LayoutDashboard className="h-5 w-5" />
+              </button>
+            )}
+            <div className="text-[13px] text-neutral-400 font-medium">
+              Dashboard / <span className="capitalize">{location.pathname.split('/').pop() || 'Overview'}</span>
+            </div>
           </div>
 
           <div className="flex items-center gap-6">
